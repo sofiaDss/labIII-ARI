@@ -28,12 +28,13 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
   ari.on('StasisStart', function (event, incoming) {
 
     // Handle DTMF events
-    incoming.answer(setTimeout((err) => {
-      play(incoming, 'sound:menuIntro')
-    }, 3000));
+    //incoming.answer(setTimeout((err) => {
+    //  play(incoming, 'sound:menuIntro')
+    //}, 3000));
+    console.log('---- Menu Inicio ---');
+    console.log('Ingrese 1 para consultar una apuesta. Ingrese 2 para realizar una nueva apuesta.');
 
     incoming.on('ChannelDtmfReceived', introMenu);
-
     async function introMenu(event, channel) {
 
       const digit = event.digit;
@@ -41,21 +42,26 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
       switch (digit) {
         case '1':    //Consultar resultados de apuestas
           incoming.removeListener('ChannelDtmfReceived', introMenu);
-          play(channel, 'sound:ConsultaApuestaCedula');
+          //play(channel, 'sound:ConsultaApuestaCedula');
+          console.log('- ConsultarApuesta -');
+          console.log('Digite su cedula seguido de la tecla #');
           consultaA(event, incoming, channel)
           break;
 
         case '2': //Realizar una nueva apuesta
           incoming.removeListener('ChannelDtmfReceived', introMenu);
-          play(channel, 'sound:nuevaApuesta');
+          //play(channel, 'sound:nuevaApuesta');
+          console.log('- RealizarApuesta -');
+          console.log('Digite su cedula seguido de la tecla #');
           nuevaA(event, incoming);
           break;
 
         default:
           console.log('default')
           text = 'opción no válida, inténtelo de nuevo';
-          await generarAudio(text);
-          await convertirAudio();
+          console.log(text);
+          //await generarAudio(text);
+          //await convertirAudio();
           play(channel, pathAudios);
           break;
       }
@@ -105,6 +111,9 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
       case '#':
         incoming.removeListener('ChannelDtmfReceived', consultarApuesta);
         console.log('## Seleccion de tipo de apuesta a consultar ##');
+        console.log('1. Apuesta ganada');
+        console.log('2. Apuesta pérdida');
+        console.log('3. Apuesta no jugada');
         incoming.on('ChannelDtmfReceived', consultaTipoA);
         break;
 
@@ -138,10 +147,11 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
           })
           .catch(text = 'La consulta realizada ha sido fallida, intente de nuevo')
 
-        await generarAudio(text);
-        await convertirAudio()
+        console.log(text);
+        //await generarAudio(text);
+        //await convertirAudio()
         query = '';
-        await play(incoming, pathAudios);
+        //await play(incoming, pathAudios);
         setTimeout(function () {
           colgarLLamada(incoming);
         }, 5000)
@@ -159,10 +169,11 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
             })
             .catch(text = 'La consulta realizada ha sido fallida, intente de nuevo.')
 
-        await generarAudio(text);
-        await convertirAudio()
+        console.log(text);
+        //await generarAudio(text);
+        //await convertirAudio()
         query = '';
-        await play(incoming, pathAudios);
+        //await play(incoming, pathAudios);
         setTimeout(function () {
             colgarLLamada(incoming);
         }, 5000)
@@ -180,10 +191,12 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
             })
             .catch(text = 'La consulta realizada ha sido fallida, intente de nuevo')
 
-        await generarAudio(text);
-        await convertirAudio()
+        console.log(text);
+
+        //await generarAudio(text);
+        //await convertirAudio()
         query = '';
-        await play(incoming, pathAudios);
+        //await play(incoming, pathAudios);
         setTimeout(function () {
             colgarLLamada(incoming);
         }, 5000)
@@ -193,8 +206,9 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
         incoming.removeListener('ChannelDtmfReceived', consultaTipoA);
         console.log('default')
         text = 'Tipo de apuesta no válida, inténtelo de nuevo';
-        await generarAudio(text);
-        await convertirAudio();
+        console.log(text);
+        //await generarAudio(text);
+        //await convertirAudio();
         play(channel, pathAudios);
         incoming.on('ChannelDtmfReceived', consultaTipoA)
         break;
@@ -209,8 +223,9 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
       case '#':
         incoming.removeListener('ChannelDtmfReceived', realizarApuesta);
         text = 'Este acción se encuentra en reparación, intentelo más tarde.';
-        await generarAudio(text);
-        await convertirAudio();
+        console.log(text);
+        //await generarAudio(text);
+        //await convertirAudio();
         play(channel, pathAudios);
 
         break;
@@ -219,8 +234,9 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
         incoming.removeListener('ChannelDtmfReceived', realizarApuesta);
         console.log('default')
         text = 'fallo en realizar apuesta, inténtelo de nuevo';
-        await generarAudio(text);
-        await convertirAudio();
+        console.log(text);
+        //await generarAudio(text);
+        //await convertirAudio();
         play(channel, pathAudios);
         incoming.on('ChannelDtmfReceived', realizarApuesta)
         break;
