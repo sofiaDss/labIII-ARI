@@ -45,7 +45,7 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
           //play(channel, 'sound:ConsultaApuestaCedula');
           console.log('- ConsultarApuesta -');
           console.log('Digite su cedula seguido de la tecla #');
-          consultaA(event, incoming, channel)
+          consultaA(event, incoming, channel);
           break;
 
         case '2': //Realizar una nueva apuesta
@@ -57,7 +57,7 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
           break;
 
         default:
-          console.log('default')
+          console.log('default');
           text = 'opción no válida, inténtelo de nuevo';
           console.log(text);
           //await generarAudio(text);
@@ -120,7 +120,7 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
       case '*':
         cedula = '';
         incoming.removeListener('ChannelDtmfReceived', consultarApuesta);
-        incoming.on('ChannelDtmfReceived', consultarApuesta)
+        incoming.on('ChannelDtmfReceived', consultarApuesta);
         break
 
       default:
@@ -136,14 +136,15 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
     // Grabacion de peticion de tipo de apuestas a consultar
     switch (dato) {
       case '1':
+        console.log('Ingresa a opción 1');
         tipo_apuesta='2';
         incoming.removeListener('ChannelDtmfReceived', consultaTipoA);
-        query = `SELECT count(*) FROM apuestas INNER JOIN usuarios ON apuestas.id_usuario=usuarios.id_usuario WHERE usuarios.cedula = ${cedula} and apuestas.jugado='${tipo_apuesta}' and apuestas.pagado='0' ORDER BY apuestas.id_apuesta desc`
+        query = `SELECT count(*) FROM apuestas INNER JOIN usuarios ON apuestas.id_usuario=usuarios.id_usuario WHERE usuarios.cedula = ${cedula} and apuestas.jugado='${tipo_apuesta}' and apuestas.pagado='0' ORDER BY apuestas.id_apuesta desc`;
 
         resultado = await consultasDB(query)
           .then(function (resultado) {
             if (!resultado) return
-            text = `usted cuenta con ${resultado} apuestas ganadas y no cobradas`
+            text = `usted cuenta con ${resultado} apuestas ganadas y no cobradas`;
           })
           .catch(text = 'La consulta realizada ha sido fallida, intente de nuevo')
 
@@ -158,14 +159,15 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
         break;
 
       case '2':
+        console.log('Ingresa a opción 2');
         tipo_apuesta='1';
         incoming.removeListener('ChannelDtmfReceived', consultaTipoA);
-        query = `SELECT count(*) FROM apuestas INNER JOIN usuarios ON apuestas.id_usuario=usuarios.id_usuario WHERE usuarios.cedula = ${cedula} and apuestas.jugado='${tipo_apuesta}' ORDER BY apuestas.id_apuesta desc`
+        query = `SELECT count(*) FROM apuestas INNER JOIN usuarios ON apuestas.id_usuario=usuarios.id_usuario WHERE usuarios.cedula = ${cedula} and apuestas.jugado='${tipo_apuesta}' ORDER BY apuestas.id_apuesta desc`;
 
         resultado = await consultasDB(query)
             .then(function (resultado) {
             if (!resultado) return
-            text = `usted cuenta con ${resultado} apuestas pérdidas`
+            text = `usted cuenta con ${resultado} apuestas pérdidas`;
             })
             .catch(text = 'La consulta realizada ha sido fallida, intente de nuevo.')
 
@@ -180,14 +182,15 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
         break;
 
       case '3':
+        console.log('Ingresa a opción 3');
         tipo_apuesta='0';
         incoming.removeListener('ChannelDtmfReceived', consultaTipoA);
-        query = `SELECT count(*) FROM apuestas INNER JOIN usuarios ON apuestas.id_usuario=usuarios.id_usuario WHERE usuarios.cedula = ${cedula} and apuestas.jugado='${tipo_apuesta}' ORDER BY apuestas.id_apuesta desc`
+        query = `SELECT count(*) FROM apuestas INNER JOIN usuarios ON apuestas.id_usuario=usuarios.id_usuario WHERE usuarios.cedula = ${cedula} and apuestas.jugado='${tipo_apuesta}' ORDER BY apuestas.id_apuesta desc`;
 
         resultado = await consultasDB(query)
             .then(function (resultado) {
             if (!resultado) return
-            text = `usted cuenta con ${resultado} apuestas aún no jugadas. Espere a que el partido se lleve a cabo.`
+            text = `usted cuenta con ${resultado} apuestas aún no jugadas. Espere a que el partido se lleve a cabo.`;
             })
             .catch(text = 'La consulta realizada ha sido fallida, intente de nuevo')
 
@@ -204,13 +207,13 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
 
       default:
         incoming.removeListener('ChannelDtmfReceived', consultaTipoA);
-        console.log('default')
+        console.log('default');
         text = 'Tipo de apuesta no válida, inténtelo de nuevo';
         console.log(text);
         //await generarAudio(text);
         //await convertirAudio();
         play(channel, pathAudios);
-        incoming.on('ChannelDtmfReceived', consultaTipoA)
+        incoming.on('ChannelDtmfReceived', consultaTipoA);
         break;
     }
   }
@@ -232,20 +235,20 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
 
       default:
         incoming.removeListener('ChannelDtmfReceived', realizarApuesta);
-        console.log('default')
+        console.log('default');
         text = 'fallo en realizar apuesta, inténtelo de nuevo';
         console.log(text);
         //await generarAudio(text);
         //await convertirAudio();
         play(channel, pathAudios);
-        incoming.on('ChannelDtmfReceived', realizarApuesta)
+        incoming.on('ChannelDtmfReceived', realizarApuesta);
         break;
     }
   }
 
   function colgarLLamada(incoming) {
     setTimeout(function () {
-      incoming.hangup()
+      incoming.hangup();
     }, 2000);
   }
 
