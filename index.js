@@ -17,6 +17,7 @@ let tipo_apuesta='';
 let query='';
 let resultado='';
 let text = '';
+let resultaux='';
 const pathAudios = `sound:/${__dirname}/audios/gsm/audio`;
 
 
@@ -34,7 +35,8 @@ ClienteARI.connect('http://localhost:8088', 'asterisk', 'asterisk', function (er
     //  play(incoming, 'sound:menuIntro')
     //}, 3000));
     console.log('---- Menu Inicio ---');
-    console.log('Ingrese 1 para consultar una apuesta. Ingrese 2 para realizar una nueva apuesta.');
+    console.log('Ingrese 1 para consultar una apuesta.');
+    console.log('Ingrese 2 para realizar una nueva apuesta.');
     incoming.on('ChannelDtmfReceived', introMenu);
 
 
@@ -49,8 +51,7 @@ ClienteARI.connect('http://localhost:8088', 'asterisk', 'asterisk', function (er
           console.log('- ConsultarApuesta -');
           console.log('Digite su cedula seguido de la tecla #');
           console.log('Si está inconforme con el número ingresado, digite *');
-          cedula = '';
-          incoming.on('ChannelDtmfReceived', consultarApuesta);
+          consultaA(event, incoming, channel);
           break;
 
         case '2': //Realizar una nueva apuesta
@@ -59,8 +60,7 @@ ClienteARI.connect('http://localhost:8088', 'asterisk', 'asterisk', function (er
           console.log('- RealizarApuesta -');
           console.log('Digite su cedula seguido de la tecla #');
           console.log('Si está inconforme con el número ingresado, digite *');
-          cedula  = '';
-          incoming.on('ChannelDtmfReceived', realizarApuesta); ///----------------FALTA
+          nuevaA(event, incoming); ///----------------FALTA
           break;
 
         default:
@@ -70,11 +70,22 @@ ClienteARI.connect('http://localhost:8088', 'asterisk', 'asterisk', function (er
           //await generarAudio(text);
           //await convertirAudio();
           //play(channel, pathAudios);
-          incoming.removeListener('ChannelDtmfReceived', introMenu);
-          incoming.on('ChannelDtmfReceived', introMenu); 
           break;
       }
     }
+
+    function consultA(event, incoming, channel) {
+      cedula = '';
+      console.log('---------consultar resultados de apuestas---------');
+      incoming.on('ChannelDtmfReceived', consultarApuesta);
+    }
+
+    function nuevaA(event, incoming) {
+      cedula = '';
+      console.log('---------Realizar una nueva apuesta---------');
+      incoming.on('ChannelDtmfReceived', realizarApuesta);
+    }
+
   });
 
 
@@ -101,7 +112,6 @@ ClienteARI.connect('http://localhost:8088', 'asterisk', 'asterisk', function (er
   }
 
   async function consultarApuesta(event, incoming) {
-    console.log('---------consultar resultados de apuestas---------');
     let dato = event.digit;
     // Grabacion de peticion de cedula y marcacion de #
     switch (dato) {
@@ -115,9 +125,9 @@ ClienteARI.connect('http://localhost:8088', 'asterisk', 'asterisk', function (er
         break;
 
       case '*':
-        cedula = '';
-        incoming.removeListener('ChannelDtmfReceived', consultarApuesta);
-        incoming.on('ChannelDtmfReceived', consultarApuesta);
+        cedula = cedula.substring(0,cedula.length-1);
+        console.log('retirando cedula');
+        console.log(cedula);
         break
 
       default:
@@ -143,7 +153,8 @@ ClienteARI.connect('http://localhost:8088', 'asterisk', 'asterisk', function (er
             if (!resultado) return
             console.log('se obtiene resultado');
             console.log(resultado);
-            if(resultado!=null){
+            console.log('Ese fue el resultado');
+            if(resultado.length!=0){
               text = 'Usted ha ganado la apuesta'+resultado.slice(1)+'vs'+resultado.slice(2)+'con el marcador'+resultado.slice(3)+'vs'+resultado.slice(4)+' y el monto de '+resultado.slice(5);      
             }else{
               text = 'Usted no cuenta con apuestas ganadas';
@@ -173,7 +184,7 @@ ClienteARI.connect('http://localhost:8088', 'asterisk', 'asterisk', function (er
             .then(function (resultado) {
               console.log('se obtiene resultado');
               console.log(resultado);
-              if(resultado!=null){
+              if(resultado.length!=0){
                 text = 'Usted ha pérdido la apuesta'+resultado.slice(1)+'vs'+resultado.slice(2)+'con el marcador'+resultado.slice(3)+'vs'+resultado.slice(4)+' y el monto de '+resultado.slice(5);      
               }else{
                 text = 'Usted no cuenta con apuestas pérdidas';
@@ -203,7 +214,7 @@ ClienteARI.connect('http://localhost:8088', 'asterisk', 'asterisk', function (er
             .then(function (resultado) {
               console.log('se obtiene resultado');
               console.log(resultado);
-              if(resultado!=null){
+              if(resultado.length!=0){
                 text = 'Usted ha apostado al partido'+resultado.slice(1)+'vs'+resultado.slice(2)+'con el marcador'+resultado.slice(3)+'vs'+resultado.slice(4)+' y el monto de '+resultado.slice(5)+'. Este partido se jugará el '+resultado.slice(6);      
               }else{
                 text = 'Usted no ha realizado ninguna apuesta o todas ya cuantan con un resultado';
@@ -239,7 +250,6 @@ ClienteARI.connect('http://localhost:8088', 'asterisk', 'asterisk', function (er
   }
 
   async function realizarApuesta(event, incoming) {
-    console.log('---------Realizar una nueva apuesta---------');
     let dato = event.digit;
     // Grabacion de peticion de cedula y marcacion de #
     switch (dato) {
@@ -277,4 +287,4 @@ ClienteARI.connect('http://localhost:8088', 'asterisk', 'asterisk', function (er
 });
 
 
-//reconocimiento a: Santiago Andrés Zúñiga Sanchez, Lina Virginia Muñoz Garcés y Juan Diego Bravo Guevar
+//reconocimiento a: Santiago Andrés Zúñiga Sanchez, Lina Virginia Muñoz Garcés y Juan Diego Bravo Guevara
