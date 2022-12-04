@@ -10,6 +10,7 @@ var conexion= mysql.createConnection({
     database : 'mundialFutbol',
     user : 'root',
     password : '',
+    port: 3306
 });
 
 // Función que permite comprobar la conexión a la base de datos
