@@ -18,7 +18,7 @@ let text = '';
 const pathAudios = `sound:/${__dirname}/audios/gsm/audio`;
 
 
-client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, ari) {
+ClienteARI.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, ari) {
 
   if (err) {
     throw err; // program will crash if it fails to connect
@@ -141,7 +141,7 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
         incoming.removeListener('ChannelDtmfReceived', consultaTipoA);
         query = `SELECT count(*) FROM apuestas INNER JOIN usuarios ON apuestas.id_usuario=usuarios.id_usuario WHERE usuarios.cedula = ${cedula} and apuestas.jugado='${tipo_apuesta}' and apuestas.pagado='0' ORDER BY apuestas.id_apuesta desc`;
 
-        resultado = await consultasDB(query)
+        resultado = await consultadb(query)
           .then(function (resultado) {
             if (!resultado) return
             text = `usted cuenta con ${resultado} apuestas ganadas y no cobradas`;
@@ -164,7 +164,7 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
         incoming.removeListener('ChannelDtmfReceived', consultaTipoA);
         query = `SELECT count(*) FROM apuestas INNER JOIN usuarios ON apuestas.id_usuario=usuarios.id_usuario WHERE usuarios.cedula = ${cedula} and apuestas.jugado='${tipo_apuesta}' ORDER BY apuestas.id_apuesta desc`;
 
-        resultado = await consultasDB(query)
+        resultado = await consultadb(query)
             .then(function (resultado) {
             if (!resultado) return
             text = `usted cuenta con ${resultado} apuestas pérdidas`;
@@ -187,7 +187,7 @@ client.connect('http://localhost:8088', 'asterisk', 'asterisk', function (err, a
         incoming.removeListener('ChannelDtmfReceived', consultaTipoA);
         query = `SELECT count(*) FROM apuestas INNER JOIN usuarios ON apuestas.id_usuario=usuarios.id_usuario WHERE usuarios.cedula = ${cedula} and apuestas.jugado='${tipo_apuesta}' ORDER BY apuestas.id_apuesta desc`;
 
-        resultado = await consultasDB(query)
+        resultado = await consultadb(query)
             .then(function (resultado) {
             if (!resultado) return
             text = `usted cuenta con ${resultado} apuestas aún no jugadas. Espere a que el partido se lleve a cabo.`;
