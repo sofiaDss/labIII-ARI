@@ -37,6 +37,3 @@ const consultadb = ( query ) => {
 module.exports = {
     consultadb
 };
-
-
-connection.end();
